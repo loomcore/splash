@@ -3,14 +3,6 @@
 -- desc:   reusable splash screen with cga palette
 -- script: moon
 
-t=0
-
-sleep=(n)->
-	if n==0
-		-1
-	else
-		n-=1
-		
 rdcol=(n)->
 	{
 		b0:(peek (0x03fc0+(3*n))),
@@ -24,37 +16,37 @@ wrcol=(n,b0,b1,b2)->
 	poke 0x03fc0+(3*n)+2,b2
 
 wht=rdcol 3
-
---init=->
-fi=64
-fo=256
 trgs={
-	fi,fi+4,fi+8,fi+12,fi+16,fi+20,fi+24,fi+28,
-	fo,fo+4,fo+8,fo+12,fo+16,fo+20,fo+24,fo+28
+	1500,1560,1620,1680,1740,1800,1860,1920,
+	3500,3560,3620,3680,3740,3800,3860,3920
 }
-cols={0,1,12,8,13,9,2,3,3,2,9,13,8,12,1,0}
+cols={
+	0,1,12,8,13,9,2,3,
+	3,2,9,13,8,12,1,0
+}
 si=1
+now=0
 
-spl=true
+cls 0
+wrcol 3,0,0,0
 
 export TIC=->
---	cls 0
-	if spl
+	if now<5000 -- splash here
 		cls 0
-		while t<fo+96
-			if t==trgs[si]
-				si+=1
-				print "#{cols[si]}",t%240,t%136,3
-			t+=1
-		spl=false
-	cls 7
---	if t==f_in
---			cls 0
---			spr 1,20,20,0,2,0,0,8,2				
---			col=rdcol c
---			wrcol 3,col.b0,col.b1,col.b2
---		wrcol 3,wht.b0,wht.b1,wht.b2
-
+		now=time()
+		spr 1,64,52,0,2,0,0,8,2
+		if now>trgs[si]
+			col=rdcol cols[si]
+			if cols[si]==3
+				wrcol 3,wht.b0,wht.b1,wht.b2
+			else
+				wrcol 3,col.b0,col.b1,col.b2
+			if si<16 then si=si+1
+	else
+		cls 0
+		wrcol 3,wht.b0,wht.b1,wht.b2
+		-- game here
+		print "GAME CODE GOES HERE",100,100,3
 -- <TILES>
 -- 001:0000000000000000000000000000000000000000000000000003333000303303
 -- 002:0000000000000033000003330000333000033300003330000033000003300000
