@@ -1,50 +1,52 @@
--- title:  irrintzi 	splash screen demo
+-- title:  irrintzi splash screen demo
 -- author: irrintzi
 -- desc:   reusable splash screen with cga palette
 -- script: moon
 
-export rdcol=(n)->
+rdcol=(n)->
 	{
 		b0:(peek (0x03fc0+(3*n))),
 		b1:(peek (0x03fc0+(3*n)+1)),
 		b2:(peek (0x03fc0+(3*n)+2))
 	}
 
-export wrcol=(n,b0,b1,b2)->
+wrcol=(n,b0,b1,b2)->
 	poke 0x03fc0+(3*n),b0
 	poke 0x03fc0+(3*n)+1,b1
 	poke 0x03fc0+(3*n)+2,b2
 
-export splash=->
-	cs={
-		0,1,12,8,13,9,2,3,
-		3,3,3,3,3,3,3,3,
-		3,3,3,3,3,3,3,3,
-		3,3,3,3,3,3,3,3,
-		3,3,3,3,3,3,3,3,
-		3,2,9,13,8,12,1,0
-	}
-	if time!<1500
-		cls 0
-		wrcol 3,0,0,0
-	else
-		if time!<6250
-				for i,c in pairs cs
-					if time!>1500+i*60
-						col=rdcol c
-						if c==3
-							wrcol 3,0xff,0xff,0xff
-						else
-							wrcol 3,col.b0,col.b1,col.b2
-						spr 1,64,52,0,2,0,0,8,2
-		else
-			cls 0
-			wrcol 3,0xff,0xff,0xff
-			return true
+wht=rdcol 3
+trgs={
+	1500,1560,1620,1680,1740,1800,1860,1920,
+	3500,3560,3620,3680,3740,3800,3860,3920
+}
+cols={
+	0,1,12,8,13,9,2,3,
+	3,2,9,13,8,12,1,0
+}
+si=1
+now=0
 
---export TIC=->
---	if splash!
---		print "GAME CODE GOES HERE",100,100,3
+cls 0
+wrcol 3,0,0,0
+
+export TIC=->
+	if now<5000 -- splash here
+		cls 0
+		now=time()
+		spr 1,64,52,0,2,0,0,8,2
+		if now>trgs[si]
+			col=rdcol cols[si]
+			if cols[si]==3
+				wrcol 3,wht.b0,wht.b1,wht.b2
+			else
+				wrcol 3,col.b0,col.b1,col.b2
+			if si<16 then si=si+1
+	else
+		cls 0
+		wrcol 3,wht.b0,wht.b1,wht.b2
+		-- game here
+		print "GAME CODE GOES HERE",100,100,3
 -- <TILES>
 -- 001:0000000000000000000000000000000000000000000000000003333000303303
 -- 002:0000000000000033000003330000333000033300003330000033000003300000
