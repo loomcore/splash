@@ -11,4 +11,8 @@ this:
     if splash!
     	print "GAME CODE GOES HERE",100,100,3
 
+`splash_reusable.moon` contains just the code needed to run the splash
+screen.  It can be copied-and-pasted into another project and called
+as above.
+
 Licensed under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.md).
